@@ -2,28 +2,28 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: appkube-awsx-api-service-smoke
+  name: appkube-editor-service-smoke
   namespace: tekton-pipelines
 spec:
   description: |
-    Pipeline to deploy appkube-awsx-api-service predefined GO container is used. 
+    Pipeline to deploy appkube-appkube-editor-service predefined GO container is used. 
     GO conainer build is optional, this has to be enabled if there are changes to Dockerfile
   params:
   - name: repo-url
     type: string
-    description: AWSX API source repo https://github.com/Appkube-awsx/awsx-api.git
+    description: AWSX API source repo https://github.com/Appkube-awsx/appkube-editor.git
   - name: repo-revision
     type: string
     description: service revision to checkout. (branch, tag, sha, ref, etc...)
   - name: deploy-repo-url
     type: string
-    description: deployment repo for awsx-api service - https://github.com/Appkube-awsx/awsx-api-deployment.git
-  - name: uninstall-awsx-api-service
+    description: deployment repo for appkube-editor service - https://github.com/Appkube-awsx/appkube-editor-deployment.git
+  - name: uninstall-appkube-editor-service
     type: string
-    description: uninstall awsx-api service and post install cleanup
-  - name: build-awsx-api-base-container
+    description: uninstall appkube-editor service and post install cleanup
+  - name: build-appkube-editor-base-container
     type: string
-    description: build awsx-api base container
+    description: build appkube-editor base container
   - name: helm-workingDir-param
     type: string
     description: working directory for helm execution
@@ -51,47 +51,47 @@ spec:
     description: |
       This workspace will hold aws credentials
   tasks:
-  - name: uninstall-awsx-api-service
-    when:
-    - input: $(params.uninstall-awsx-api-service)
-      operator: in
-      values: ["true"]
-    taskRef:
-      name: helm-awsx-api-uninstall
-    params:
-    - name: workingDir
-      value: $(params.helm-workingDir-param)
-    - name: release_version
-      value: $(params.helm-release-version-param)
-    - name: release_name
-      value: $(params.helm-release-name-param)
-    - name: release_namespace
-      value: $(params.helm-release-namespace-param)
-    - name: overwrite_values
-      value: image.tag=$(tasks.fetch-repo.results.commit)
-    workspaces:
-    - name: source
-      workspace: shared-data1
-    - name: secrets
-      workspace: aws-secrets
-  - name: fetch-repo
-    when:
-    - input: $(params.uninstall-awsx-api-service)
-      operator: in
-      values: ["false"]
-    taskRef:
-      name: git-clone
-    workspaces:
-    - name: output
-      workspace: shared-data
-    params:
-    - name: url
-      value: $(params.repo-url)
-    - name: revision
-      value: $(params.repo-revision)
+  # - name: uninstall-appkube-editor-service
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["true"]
+  #   taskRef:
+  #     name: helm-appkube-editor-uninstall
+  #   params:
+  #   - name: workingDir
+  #     value: $(params.helm-workingDir-param)
+  #   - name: release_version
+  #     value: $(params.helm-release-version-param)
+  #   - name: release_name
+  #     value: $(params.helm-release-name-param)
+  #   - name: release_namespace
+  #     value: $(params.helm-release-namespace-param)
+  #   - name: overwrite_values
+  #     value: image.tag=$(tasks.fetch-repo.results.commit)
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data1
+  #   - name: secrets
+  #     workspace: aws-secrets
+  # - name: fetch-repo
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   taskRef:
+  #     name: git-clone
+  #   workspaces:
+  #   - name: output
+  #     workspace: shared-data
+  #   params:
+  #   - name: url
+  #     value: $(params.repo-url)
+  #   - name: revision
+  #     value: $(params.repo-revision)
   - name: fetch-deploy-repo
     when:
-    - input: $(params.uninstall-awsx-api-service)
+    - input: $(params.uninstall-appkube-editor-service)
       operator: in
       values: ["false"]
     taskRef:
@@ -102,12 +102,12 @@ spec:
     params:
     - name: url
       value: $(params.deploy-repo-url)
-  - name: build-awsx-api-base-container
+  - name: build-appkube-editor-base-container
     when:
-    - input: $(params.uninstall-awsx-api-service)
+    - input: $(params.uninstall-appkube-editor-service)
       operator: in
       values: ["false"]
-    - input: $(params.build-awsx-api-base-container)
+    - input: $(params.build-appkube-editor-base-container)
       operator: in
       values: ["true"]
     runAfter: ["fetch-deploy-repo"]
@@ -120,90 +120,90 @@ spec:
       workspace: dockerconfig-secret
     params:
     - name: IMAGE
-      value: synectiks/awsx-api-base:$(tasks.fetch-repo.results.commit)
+      value: synectiks/appkube-editor-base:$(tasks.fetch-deploy-repo.results.commit)
     - name: IMAGE2
-      value: synectiks/awsx-api-base:latest
+      value: synectiks/appkube-editor-base:latest
     - name: DOCKERFILE
       value: $(workspaces.source.path)/Dockerfile
     - name: CONTEXT
       value: ./
-  - name: build-awsx-api
-    when:
-    - input: $(params.uninstall-awsx-api-service)
-      operator: in
-      values: ["false"]
-    runAfter: ["build-awsx-api-base-container"]
-    taskRef:
-      name: build-awsx-api-task
-    workspaces:
-    - name: source
-      workspace: shared-data
-    params:
-    - name: workingDir
-      value: $(workspaces.source.path)
-  - name: build-awsx-api-container
-    when:
-    - input: $(params.uninstall-awsx-api-service)
-      operator: in
-      values: ["false"]
-    runAfter: ["build-awsx-api"]
-    taskRef:
-      name: build-kaniko
-    workspaces:
-    - name: source
-      workspace: shared-data
-    - name: dockerconfig
-      workspace: dockerconfig-secret
-    params:
-    - name: IMAGE
-      value: synectiks/awsx-api:$(tasks.fetch-repo.results.commit)
-    - name: IMAGE2
-      value: synectiks/awsx-api:latest
-    - name: DOCKERFILE
-      value: $(workspaces.source.path)/Dockerfile
-    - name: CONTEXT
-      value: ./
-  - name: service-deploy-with-helm
-    when:
-    - input: $(params.uninstall-awsx-api-service)
-      operator: in
-      values: ["false"]
-    runAfter: ["build-awsx-api-container"]
-    taskRef:
-      name: helm-awsx-api-install
-    params:
-    - name: workingDir
-      value: $(params.helm-workingDir-param)
-    - name: release_version
-      value: $(params.helm-release-version-param)
-    - name: release_name
-      value: $(params.helm-release-name-param)
-    - name: release_namespace
-      value: $(params.helm-release-namespace-param)
-    - name: overwrite_values
-      value: image.tag=$(tasks.fetch-repo.results.commit)
-    workspaces:
-    - name: source
-      workspace: shared-data1
-    - name: secrets
-      workspace: aws-secrets
-  finally:
-    - name: cleanup-on-success
-      when:
-      - input: $(tasks.status)
-        operator: in
-        values: ["Succeeded"]
-      taskRef:
-        name: cleanup-on-success
+  # - name: build-appkube-editor
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   runAfter: ["build-appkube-editor-base-container"]
+  #   taskRef:
+  #     name: build-appkube-editor-task
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
+  #   params:
+  #   - name: workingDir
+  #     value: $(workspaces.source.path)
+  # - name: build-appkube-editor-container
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   runAfter: ["build-appkube-editor"]
+  #   taskRef:
+  #     name: build-kaniko
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
+  #   - name: dockerconfig
+  #     workspace: dockerconfig-secret
+  #   params:
+  #   - name: IMAGE
+  #     value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
+  #   - name: IMAGE2
+  #     value: synectiks/appkube-editor:latest
+  #   - name: DOCKERFILE
+  #     value: $(workspaces.source.path)/Dockerfile
+  #   - name: CONTEXT
+  #     value: ./
+  # - name: service-deploy-with-helm
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   runAfter: ["build-appkube-editor-container"]
+  #   taskRef:
+  #     name: helm-appkube-editor-install
+  #   params:
+  #   - name: workingDir
+  #     value: $(params.helm-workingDir-param)
+  #   - name: release_version
+  #     value: $(params.helm-release-version-param)
+  #   - name: release_name
+  #     value: $(params.helm-release-name-param)
+  #   - name: release_namespace
+  #     value: $(params.helm-release-namespace-param)
+  #   - name: overwrite_values
+  #     value: image.tag=$(tasks.fetch-repo.results.commit)
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data1
+  #   - name: secrets
+  #     workspace: aws-secrets
+  # finally:
+  #   - name: cleanup-on-success
+  #     when:
+  #     - input: $(tasks.status)
+  #       operator: in
+  #       values: ["Succeeded"]
+  #     taskRef:
+  #       name: cleanup-on-success
 ---
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: appkube-awsx-api-service-smoke-run
+  name: appkube-editor-service-smoke-run
   namespace: tekton-pipelines
 spec:
   pipelineRef:
-    name: appkube-awsx-api-service-smoke
+    name: appkube-editor-service-smoke
   workspaces:
   - name: shared-data
     volumeClaimTemplate:
@@ -229,20 +229,20 @@ spec:
       secretName: smoke-aws-credentials
   params:
   - name: repo-url
-    value: https://github.com/Appkube-awsx/awsx-api.git
+    value: https://github.com/AppkubeCloud/Appkube-editor.git
   - name: repo-revision
     value: ''
   - name: deploy-repo-url
-    value: https://github.com/Appkube-awsx/awsx-api-deployment.git
+    value: https://github.com/AppkubeCloud/appkube-editor-deployment.git
   - name: helm-release-version-param
     value: 0.1.0
   - name: helm-release-name-param
-    value: appkube-awsx-api
+    value: appkube-editor
   - name: helm-release-namespace-param
-    value: appkube-awsx-api-service
+    value: appkube-editor-service
   - name: helm-workingDir-param
-    value: $(workspaces.source.path)/helm/awsx-api
-  - name: build-awsx-api-base-container
-    value: "false"
-  - name: uninstall-awsx-api-service
+    value: $(workspaces.source.path)
+  - name: build-appkube-editor-base-container
+    value: "true"
+  - name: uninstall-appkube-editor-service
     value: "false"    
