@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-awsx-api-task
+  namespace: tekton-pipelines
+spec:
+  workspaces:
+    - name: source
+      description: The git repo will be cloned onto the volume backing this Workspace.
+  params:
+    - name: workingDir
+      description: Working directory parameter
+      default: ""
+  steps:
+    - name: read-directory
+      image: synectiks/awsx-api-base:latest
+      script: echo $(params.workingDir) && ls -al $(params.workingDir)
+    - name: awsx-api-build
+      image: synectiks/awsx-api-base:latest
+      workingDir: $(params.workingDir)
+      script: |
+        /bin/bash
+        go version
+        go build
