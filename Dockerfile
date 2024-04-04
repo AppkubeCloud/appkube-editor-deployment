@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Update and install necessary packages
 RUN apt update && apt upgrade -y \
-    && apt install -y sudo curl wget zip unzip build-essential git
+&& apt install -y sudo curl wget zip unzip build-essential git
 
 # Set root user
 USER root
@@ -45,14 +45,34 @@ RUN mv go go19
 # Create GOPATH folder inside Go
 RUN mkdir -p /opt/software/go19/gopath
 
-# Add environment variables for Go to .bashrc file
-RUN echo 'export GOROOT=/opt/software/go19' >> /home/ubuntu/.bashrc \
-    && echo 'export GOPATH=/opt/software/go19/gopath' >> /home/ubuntu/.bashrc \
-    && echo 'export PATH=$PATH:/opt/software/go19/bin' >> /home/ubuntu/.bashrc
+# Set environment variables for Go
+ENV GOROOT=/opt/software/go19
+ENV GOPATH=/opt/software/go19/gopath
+ENV PATH=$PATH:/opt/software/go19/bin
 
 # Install nvm (node version manager)
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-    && /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+&& /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+
+# Create directory for code
+RUN mkdir -p /opt/mycode
+
+# Clone repository
+WORKDIR /opt/mycode
+RUN git clone https://github.com/AppkubeCloud/Appkube-editor.git
+
+# Go to cloned directory
+WORKDIR /opt/mycode/Appkube-editor
+
+# Install wire
+RUN go install github.com/google/wire/cmd/wire@latest
+
+# Generate wire files
+RUN $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
+
+# Install yarn and run yarn install --immutable
+RUN /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
 
 # Set the default command to execute the script
 CMD ["/wait.sh"]
+
