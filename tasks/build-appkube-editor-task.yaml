@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: build-awsx-api-task
+  name: build-appkube-editor-task
   namespace: tekton-pipelines
 spec:
   workspaces:
@@ -13,12 +13,32 @@ spec:
       default: ""
   steps:
     - name: read-directory
-      image: synectiks/awsx-api-base:latest
-      script: echo $(params.workingDir) && ls -al $(params.workingDir)
-    - name: awsx-api-build
-      image: synectiks/awsx-api-base:latest
+      image: synectiks/appkube-editor-base:latest
+      script: echo $(params.workingDir) && ls -alR $(params.workingDir)
+    - name: appkube-editor-build
+      image: synectiks/appkube-editor-base:latest
       workingDir: $(params.workingDir)
       script: |
-        /bin/bash
-        go version
-        go build
+        #!/bin/bash 
+        echo building service from container
+        cd /opt/mycode/Appkube-editor/conf
+        sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
+        sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+
+        # Go to appkube-editor root directory
+        cd /opt/mycode/Appkube-editor
+
+        # Compile backend (go server)
+        go run build.go setup && go run build.go build
+
+        # Install yarn and run yarn install --immutable
+        source /home/ubuntu/.nvm/nvm.sh
+        npm install -g yarn
+        yarn install --immutable
+
+        # Build UI
+        source /home/ubuntu/.nvm/nvm.sh 
+        yarn build
+
+        chmod -R +x /opt/mycode/Appkube-editor/data
+        
