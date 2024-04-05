@@ -21,12 +21,17 @@ spec:
       script: |
         #!/bin/bash 
         echo building service from container
-        cd /opt/mycode/Appkube-editor/conf
-        sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
-        sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+        whoami
+        echo $PWD
+        ls -al
+        ls -al /home/ubuntu
+        echo --------
+        cd conf
+        sudo sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
+        sudo sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
 
         # Go to appkube-editor root directory
-        cd /opt/mycode/Appkube-editor
+        cd ../
 
         # Compile backend (go server)
         go run build.go setup && go run build.go build
@@ -40,5 +45,5 @@ spec:
         source /home/ubuntu/.nvm/nvm.sh 
         yarn build
 
-        chmod -R +x /opt/mycode/Appkube-editor/data
+        chmod -R +x data
         

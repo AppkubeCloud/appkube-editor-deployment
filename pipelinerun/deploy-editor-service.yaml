@@ -80,7 +80,7 @@ spec:
       operator: in
       values: ["false"]
     taskRef:
-      name: git-clone
+      name: editor-git-clone
     workspaces:
     - name: output
       workspace: shared-data
