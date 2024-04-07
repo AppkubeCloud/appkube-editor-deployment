@@ -142,7 +142,8 @@ spec:
       workspace: shared-data
     params:
     - name: workingDir
-      value: $(workspaces.source.path)/opt/mycode
+      # value: $(workspaces.source.path)/opt/mycode
+      value: /opt/mycode
   - name: build-appkube-editor-container
     when:
     - input: $(params.uninstall-appkube-editor-service)
@@ -158,7 +159,8 @@ spec:
       workspace: dockerconfig-secret
     params:
     - name: IMAGE
-      value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
+      # value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
+      value: synectiks/appkube-editor:latest1
     - name: IMAGE2
       value: synectiks/appkube-editor:latest
     - name: DOCKERFILE
@@ -245,6 +247,6 @@ spec:
   - name: helm-workingDir-param
     value: $(workspaces.source.path)
   - name: 1build-appkube-editor-base-container
-    value: "true"
+    value: "false"
   - name: uninstall-appkube-editor-service
     value: "false"    
