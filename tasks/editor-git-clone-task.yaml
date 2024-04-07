@@ -209,7 +209,9 @@ spec:
           -depth="${PARAM_DEPTH}" \
           -sparseCheckoutDirectories="${PARAM_SPARSE_CHECKOUT_DIRECTORIES}"
         cd "${CHECKOUT_DIR}"
-        chown -R ubuntu:ubuntu .
+        # chown -R ubuntu:ubuntu .
+        # chmod -R 777 conf 
+
         RESULT_SHA="$(git rev-parse HEAD)"
         EXIT_CODE="$?"
         if [ "${EXIT_CODE}" != 0 ] ; then

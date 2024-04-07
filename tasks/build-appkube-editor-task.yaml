@@ -25,10 +25,28 @@ spec:
         echo $PWD
         ls -al
         ls -al /home/ubuntu
+
         echo --------
+        mkdir -p /opt/mycode
+        # Clone repository
+        cd /opt/mycode
+        git clone https://github.com/AppkubeCloud/Appkube-editor.git
+
+        # Go to cloned directory
+        cd /opt/mycode/Appkube-editor
+
+        # Install wire
+        go install github.com/google/wire/cmd/wire@latest
+
+        # Generate wire files
+        $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
+
+        # Install yarn and run yarn install --immutable
+        /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
+
         cd conf
-        sudo sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
-        sudo sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+        sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
+        sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
 
         # Go to appkube-editor root directory
         cd ../

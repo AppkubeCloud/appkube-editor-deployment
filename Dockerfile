@@ -55,23 +55,23 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
 && /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
 
 # Create directory for code
-RUN mkdir -p /opt/mycode
+# RUN mkdir -p /opt/mycode
 
-# Clone repository
-WORKDIR /opt/mycode
-RUN git clone https://github.com/AppkubeCloud/Appkube-editor.git
+# # Clone repository
+# WORKDIR /opt/mycode
+# RUN git clone https://github.com/AppkubeCloud/Appkube-editor.git
 
 # Go to cloned directory
-WORKDIR /opt/mycode/Appkube-editor
+# WORKDIR /opt/mycode/Appkube-editor
 
-# Install wire
-RUN go install github.com/google/wire/cmd/wire@latest
+# # Install wire
+# RUN go install github.com/google/wire/cmd/wire@latest
 
-# Generate wire files
-RUN $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
+# # Generate wire files
+# RUN $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
-# Install yarn and run yarn install --immutable
-RUN /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
+# # Install yarn and run yarn install --immutable
+# RUN /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
 
 # Set the default command to execute the script
 # CMD ["/wait.sh"]
