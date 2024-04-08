@@ -73,9 +73,7 @@ RUN go install github.com/google/wire/cmd/wire@latest
 # RUN $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
 # # Install yarn and run yarn install --immutable , keep in base
-RUN /bin/bash -c "source /root/nvm/nvm.sh && yarn install --immutable"
-
-RUN sleep 600
+# RUN /bin/bash -c "source /root/nvm/nvm.sh && yarn install --immutable"
 
 # Set the default command to execute the script
 # CMD ["/wait.sh"]
