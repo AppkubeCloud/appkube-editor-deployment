@@ -14,26 +14,24 @@ spec:
   steps:
     - name: read-directory
       image: synectiks/appkube-editor-base:latest
-      script: echo $(params.workingDir) && ls -alR $(params.workingDir)
+      script: echo $(params.workingDir) && ls -al $(params.workingDir)
     - name: appkube-editor-build
       image: synectiks/appkube-editor-base:latest
+      securityContext:
+        runAsUser: 0
       workingDir: $(params.workingDir)
       script: |
         #!/bin/bash 
         echo building service from container
-        whoami
-        echo $PWD
-        ls -al
-        ls -al /home/ubuntu
-
+        ls -al /workspace/source
         echo --------
-        mkdir -p /opt/mycode
-        # Clone repository
-        cd /opt/mycode
-        git clone https://github.com/AppkubeCloud/Appkube-editor.git
+        # mkdir -p /workspace/source/opt/mycode
+        # # Clone repository
+        # cd /workspace/source/opt/mycode
+        # git clone https://github.com/AppkubeCloud/Appkube-editor.git
 
         # Go to cloned directory
-        cd /opt/mycode/Appkube-editor
+        cd /workspace/source/
 
         # Install wire
         go install github.com/google/wire/cmd/wire@latest
@@ -63,5 +61,4 @@ spec:
         source /home/ubuntu/.nvm/nvm.sh 
         yarn build
 
-        chmod -R +x data
-        
+        chmod -R +x data        

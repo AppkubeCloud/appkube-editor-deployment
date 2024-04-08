@@ -211,7 +211,7 @@ spec:
         cd "${CHECKOUT_DIR}"
         # chown -R ubuntu:ubuntu .
         # chmod -R 777 conf 
-
+        mkdir -p /workspace/opt/mycode
         RESULT_SHA="$(git rev-parse HEAD)"
         EXIT_CODE="$?"
         if [ "${EXIT_CODE}" != 0 ] ; then

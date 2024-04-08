@@ -87,8 +87,8 @@ spec:
     params:
     - name: url
       value: $(params.repo-url)
-    - name: subdirectory
-      value: "/opt/mycode"
+    # - name: subdirectory
+    #   value: "/opt/mycode"
     - name: revision
       value: $(params.repo-revision)
   - name: fetch-deploy-repo
@@ -134,7 +134,7 @@ spec:
     - input: $(params.uninstall-appkube-editor-service)
       operator: in
       values: ["false"]
-    runAfter: ["build-appkube-editor-base-container"]
+    runAfter: ["build-appkube-editor-base-container", "fetch-repo"]
     taskRef:
       name: build-appkube-editor-task
     workspaces:
@@ -142,8 +142,8 @@ spec:
       workspace: shared-data
     params:
     - name: workingDir
-      # value: $(workspaces.source.path)/opt/mycode
-      value: /opt/mycode
+      value: $(workspaces.source.path)
+      # value: /opt/mycode
   - name: build-appkube-editor-container
     when:
     - input: $(params.uninstall-appkube-editor-service)
@@ -159,8 +159,7 @@ spec:
       workspace: dockerconfig-secret
     params:
     - name: IMAGE
-      # value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
-      value: synectiks/appkube-editor:latest1
+      value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
     - name: IMAGE2
       value: synectiks/appkube-editor:latest
     - name: DOCKERFILE

@@ -48,6 +48,9 @@ spec:
     description: Digest of the image just built.
 
   steps:
+  - name: read-directory
+    image: synectiks/appkube-editor-base:latest
+    script: echo $(workspaces.source.path) && ls -al $(workspaces.source.path)
   - name: build-and-push-commitid-tag
     workingDir: $(workspaces.source.path)/opt/mycode
     image: $(params.BUILDER_IMAGE)
