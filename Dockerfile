@@ -53,7 +53,9 @@ ENV PATH=$PATH:/opt/software/go19/bin
 # Install nvm (node version manager)
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
 && /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
-
+ENV NVM_DIR "/root/.nvm"
+# Load nvm and bash completion
+RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
 # Create directory for code
 # RUN mkdir -p /opt/mycode
 
@@ -72,6 +74,8 @@ RUN go install github.com/google/wire/cmd/wire@latest
 
 # # Install yarn and run yarn install --immutable , keep in base
 RUN /bin/bash -c "source /root/nvm/nvm.sh && yarn install --immutable"
+
+RUN sleep 600
 
 # Set the default command to execute the script
 # CMD ["/wait.sh"]
