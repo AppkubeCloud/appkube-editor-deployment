@@ -19,13 +19,13 @@ USER root
 RUN chmod 777 /opt/ -R
 
 # Create an 'ubuntu' user with sudo privileges
-RUN useradd -m -s /bin/bash ubuntu && echo "ubuntu:ubuntu" | chpasswd
+# RUN useradd -m -s /bin/bash ubuntu && echo "ubuntu:ubuntu" | chpasswd
 
 # Switch to ubuntu user
-USER ubuntu
+# USER ubuntu
 
 # Set shell to bash
-SHELL ["/bin/bash", "-c"]
+# SHELL ["/bin/bash", "-c"]
 
 # Create directory for software
 RUN mkdir -p /opt/software
@@ -52,7 +52,9 @@ ENV PATH=$PATH:/opt/software/go19/bin
 
 # Install nvm (node version manager)
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-&& /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+# && /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+&& /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+
 ENV NVM_DIR "/home/ubuntu/.nvm"
 # Load nvm and bash completion
 RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
