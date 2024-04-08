@@ -52,7 +52,7 @@ spec:
     image: synectiks/appkube-editor-base:latest
     script: echo $(workspaces.source.path) && ls -al $(workspaces.source.path)
   - name: build-and-push-commitid-tag
-    workingDir: $(workspaces.source.path)/opt/mycode
+    workingDir: $(workspaces.source.path)
     image: $(params.BUILDER_IMAGE)
     args:
     - $(params.EXTRA_ARGS[*])
