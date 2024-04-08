@@ -33,13 +33,13 @@ spec:
         # Go to cloned directory
         cd /workspace/source/
 
-        # Install wire
+        # Install wire comment this out
         go install github.com/google/wire/cmd/wire@latest
 
         # Generate wire files
         $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
-        # Install yarn and run yarn install --immutable
+        # Install yarn and run yarn install --immutable comment this out
         /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
 
         cd conf
@@ -52,10 +52,10 @@ spec:
         # Compile backend (go server)
         go run build.go setup && go run build.go build
 
-        # Install yarn and run yarn install --immutable
-        source /home/ubuntu/.nvm/nvm.sh
-        npm install -g yarn
-        yarn install --immutable
+        # # Install yarn and run yarn install --immutable
+        # source /home/ubuntu/.nvm/nvm.sh
+        # npm install -g yarn
+        # yarn install --immutable
 
         # Build UI
         source /home/ubuntu/.nvm/nvm.sh 

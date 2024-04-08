@@ -74,23 +74,23 @@ spec:
   #     workspace: shared-data1
   #   - name: secrets
   #     workspace: aws-secrets
-  - name: fetch-repo
-    when:
-    - input: $(params.uninstall-appkube-editor-service)
-      operator: in
-      values: ["false"]
-    taskRef:
-      name: editor-git-clone
-    workspaces:
-    - name: output
-      workspace: shared-data
-    params:
-    - name: url
-      value: $(params.repo-url)
-    # - name: subdirectory
-    #   value: "/opt/mycode"
-    - name: revision
-      value: $(params.repo-revision)
+  # - name: fetch-repo
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   taskRef:
+  #     name: editor-git-clone
+  #   workspaces:
+  #   - name: output
+  #     workspace: shared-data
+  #   params:
+  #   - name: url
+  #     value: $(params.repo-url)
+  #   # - name: subdirectory
+  #   #   value: "/opt/mycode"
+  #   - name: revision
+  #     value: $(params.repo-revision)
   - name: fetch-deploy-repo
     when:
     - input: $(params.uninstall-appkube-editor-service)
@@ -129,43 +129,43 @@ spec:
       value: $(workspaces.source.path)/Dockerfile
     - name: CONTEXT
       value: ./
-  - name: build-appkube-editor
-    when:
-    - input: $(params.uninstall-appkube-editor-service)
-      operator: in
-      values: ["false"]
-    runAfter: ["build-appkube-editor-base-container", "fetch-repo"]
-    taskRef:
-      name: build-appkube-editor-task
-    workspaces:
-    - name: source
-      workspace: shared-data
-    params:
-    - name: workingDir
-      value: $(workspaces.source.path)
-      # value: /opt/mycode
-  - name: build-appkube-editor-container
-    when:
-    - input: $(params.uninstall-appkube-editor-service)
-      operator: in
-      values: ["false"]
-    runAfter: ["build-appkube-editor"]
-    taskRef:
-      name: editor-build-kaniko-task
-    workspaces:
-    - name: source
-      workspace: shared-data
-    - name: dockerconfig
-      workspace: dockerconfig-secret
-    params:
-    - name: IMAGE
-      value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
-    - name: IMAGE2
-      value: synectiks/appkube-editor:latest
-    - name: DOCKERFILE
-      value: $(workspaces.source.path)/Dockerfile
-    - name: CONTEXT
-      value: ./
+  # - name: build-appkube-editor
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   runAfter: ["build-appkube-editor-base-container", "fetch-repo"]
+  #   taskRef:
+  #     name: build-appkube-editor-task
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
+  #   params:
+  #   - name: workingDir
+  #     value: $(workspaces.source.path)
+  #     # value: /opt/mycode
+  # - name: build-appkube-editor-container
+  #   when:
+  #   - input: $(params.uninstall-appkube-editor-service)
+  #     operator: in
+  #     values: ["false"]
+  #   runAfter: ["build-appkube-editor"]
+  #   taskRef:
+  #     name: editor-build-kaniko-task
+  #   workspaces:
+  #   - name: source
+  #     workspace: shared-data
+  #   - name: dockerconfig
+  #     workspace: dockerconfig-secret
+  #   params:
+  #   - name: IMAGE
+  #     value: synectiks/appkube-editor:$(tasks.fetch-repo.results.commit)
+  #   - name: IMAGE2
+  #     value: synectiks/appkube-editor:latest
+  #   - name: DOCKERFILE
+  #     value: $(workspaces.source.path)/Dockerfile
+  #   - name: CONTEXT
+  #     value: ./
   # - name: service-deploy-with-helm
   #   when:
   #   - input: $(params.uninstall-appkube-editor-service)
@@ -246,6 +246,6 @@ spec:
   - name: helm-workingDir-param
     value: $(workspaces.source.path)
   - name: 1build-appkube-editor-base-container
-    value: "false"
+    value: "true"
   - name: uninstall-appkube-editor-service
     value: "false"    
