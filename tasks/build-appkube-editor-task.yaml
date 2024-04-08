@@ -34,13 +34,13 @@ spec:
         cd /workspace/source/
 
         # Install wire comment this out
-        go install github.com/google/wire/cmd/wire@latest
+        # go install github.com/google/wire/cmd/wire@latest
 
         # Generate wire files
         $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
         # Install yarn and run yarn install --immutable comment this out
-        /bin/bash -c "source /home/ubuntu/.nvm/nvm.sh && yarn install --immutable"
+        /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
 
         cd conf
         sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
