@@ -23,24 +23,18 @@ spec:
       script: |
         #!/bin/bash 
         echo building service from container
-        ls -al /workspace/source
-        echo --------
-        # mkdir -p /workspace/source/opt/mycode
-        # # Clone repository
-        # cd /workspace/source/opt/mycode
-        # git clone https://github.com/AppkubeCloud/Appkube-editor.git
-
+        
         # Go to cloned directory
         cd /workspace/source/
 
-        # Install wire comment this out
+        # Install wire - this is moved to base container
         # go install github.com/google/wire/cmd/wire@latest
 
         # Generate wire files
         $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
-        # Install yarn and run yarn install --immutable comment this out
-        /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
+        # Install yarn and run yarn install - this is moved to base container
+        # /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
 
         cd conf
         sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
@@ -52,13 +46,8 @@ spec:
         # Compile backend (go server)
         go run build.go setup && go run build.go build
 
-        # # Install yarn and run yarn install --immutable
-        # source /home/ubuntu/.nvm/nvm.sh
-        # npm install -g yarn
-        # yarn install --immutable
-
         # Build UI
         source /home/ubuntu/.nvm/nvm.sh 
         yarn build
 
-        chmod -R +x data        
+        chmod -R +x data

@@ -20,7 +20,13 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/job: appkube-editor-job
+    prometheus.io/path: /management/prometheus
+    prometheus.io/port: '3000'
+    prometheus.io/label: environment=devtest,app=appkube-editor-service  # The name of the service account to use.
+
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: "appkube-editor-acc"
@@ -105,3 +111,13 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+virtualservice:
+  enabled: true
+  name: "appkube-editor-vs"
+  namespace: "istio-system"
+  hosts: "api.synectiks.net"
+  gateway: "appkube-api-gateway"
+  http:
+    prefix: "/editor"
+    uri: /
