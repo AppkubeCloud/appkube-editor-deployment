@@ -49,11 +49,14 @@ spec:
 
   steps:
   - name: read-directory
-    image: synectiks/appkube-editor-base:latest
+    # image: synectiks/appkube-editor-base:latest
+    image: ubuntu:22.04
     script: echo $(workspaces.source.path) && ls -al $(workspaces.source.path)/bin && ls -al $(workspaces.source.path)/conf  && ls -al $(workspaces.source.path)/bin/linux-amd64
   - name: build-and-push-commitid-tag
     workingDir: $(workspaces.source.path)
     image: $(params.BUILDER_IMAGE)
+    securityContext:
+      runAsUser: 0
     args:
     - $(params.EXTRA_ARGS[*])
     - --dockerfile=$(params.DOCKERFILE)

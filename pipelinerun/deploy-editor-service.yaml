@@ -21,7 +21,7 @@ spec:
   - name: uninstall-appkube-editor-service
     type: string
     description: uninstall appkube-editor service and post install cleanup
-  - name: 1build-appkube-editor-base-container
+  - name: build-appkube-editor-base-container
     type: string
     description: build appkube-editor base container
   - name: helm-workingDir-param
@@ -104,7 +104,7 @@ spec:
       value: $(params.deploy-repo-url)
   - name: build-appkube-editor-base-container
     when:
-    - input: $(params.1build-appkube-editor-base-container)
+    - input: $(params.build-appkube-editor-base-container)
       operator: in
       values: ["true"]
     runAfter: ["fetch-deploy-repo"]
@@ -238,8 +238,8 @@ spec:
   - name: helm-release-namespace-param
     value: appkube-editor-service
   - name: helm-workingDir-param
-    value: $(workspaces.source.path)
-  - name: 1build-appkube-editor-base-container
+    value: $(workspaces.source.path)/helm/appkube-editor
+  - name: build-appkube-editor-base-container
     value: "false"
   - name: uninstall-appkube-editor-service
     value: "false"    
