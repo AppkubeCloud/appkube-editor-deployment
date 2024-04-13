@@ -2,20 +2,11 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: helm-appkube-editor-install
+  name: helm-appkube-editor-uninstall
   namespace: tekton-pipelines
-  labels:
-    app.kubernetes.io/version: "0.2"
-  annotations:
-    tekton.dev/categories: Deployment
-    tekton.dev/pipelines.minVersion: "0.12.1"
-    tekton.dev/tags: helm
-    tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le,linux/arm64"
 spec:
   description: >-
-    These tasks will install / upgrade a helm chart into your Kubernetes /
-    OpenShift Cluster using Helm
-
+    These tasks will install / upgrade a helm chart into your Kubernetes using Helm
   workspaces:
     - name: source
       optional: true
@@ -51,7 +42,7 @@ spec:
       description: "Specify a specific helm image"
       default: "alpine/k8s:1.25.14"
   steps:
-    - name: deploy-appkube-editor-service
+    - name: uninstall-appkube-editor-service
       image: $(params.helm_image)
       script: |
         echo "From Task"
@@ -63,5 +54,7 @@ spec:
         ls -al /workspace/source
         echo "Check kubectl presence"
         kubectl version
-        echo installing helm chart...
-        helm upgrade -i -n "$(params.release_namespace)" "$(params.release_name)" "$(params.workingDir)"/ --set "$(params.overwrite_values)"
+        echo uninstalling helm chart...
+        helm uninstall -n "$(params.release_namespace)" "$(params.release_name)"
+        echo delete namespace
+        kubectl delete namespace "$(params.release_namespace)"

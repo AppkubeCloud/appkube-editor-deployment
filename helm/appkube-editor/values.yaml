@@ -121,3 +121,6 @@ virtualservice:
   http:
     prefix: "/editor"
     uri: /
+
+tests:
+  enabled: false
