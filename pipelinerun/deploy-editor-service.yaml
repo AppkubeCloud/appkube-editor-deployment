@@ -228,7 +228,7 @@ spec:
   - name: repo-url
     value: https://github.com/AppkubeCloud/Appkube-editor.git
   - name: repo-revision
-    value: 'builddocker'
+    value: ''
   - name: deploy-repo-url
     value: https://github.com/AppkubeCloud/appkube-editor-deployment.git
   - name: helm-release-version-param
