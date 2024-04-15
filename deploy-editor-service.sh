@@ -6,7 +6,8 @@
 
 
 SERIVCENAME=appkube-editor
-NAMESPACE=appkube-editor-service
+SERVICENAMESPACE=appkube-editor-service
+NAMESPACE=tekton-pipelines
 
 echo Name of the Service: ${SERIVCENAME}
 echo Namespace: ${NAMESPACE}
@@ -42,12 +43,12 @@ fi
 # echo Add appkueb-editor specific tasks
 kubectl apply -f tasks/build-appkube-editor-task.yaml
 kubectl apply -f tasks/editor-helm-install.yaml
-kubectl apply -f task/editor-helm-unstall.yaml
+kubectl apply -f tasks/editor-helm-uninstall.yaml
 
-if kubectl get ns ${NAMESPACE} ; then
-    echo ${NAMESPACE} namespace exists
+if kubectl get ns ${SERVICENAMESPACE} ; then
+    echo ${SERVICENAMESPACE} namespace exists
 else
-    echo Creating ${NAMESPACE} and lable istio-injection: enabled
+    echo Creating ${SERVICENAMESPACE} and lable istio-injection: enabled
     kubectl apply -f helm/appkube-editor/editor-namespace.yaml
 fi
 
