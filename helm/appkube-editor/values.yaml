@@ -77,14 +77,34 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+
+
 livenessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /app-health/appkube-editor/livez
+    port: 3000
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+
 readinessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /app-health/appkube-editor/readyz
+    port: 3000
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
 
 autoscaling:
   enabled: false
