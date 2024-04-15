@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: synectiks/appkube-editor
-  pullPolicy: Àlways
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
