@@ -38,6 +38,10 @@ spec:
         && /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
         # /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
 
+        ENV NVM_DIR "/root/.nvm"
+        # Load nvm and bash completion
+        RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
+
         cd conf
         sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
         sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini

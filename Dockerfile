@@ -42,9 +42,9 @@ ENV PATH=$PATH:/opt/software/go19/bin
 # RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
 # && /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
 
-ENV NVM_DIR "/root/.nvm"
-# Load nvm and bash completion
-RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
+# ENV NVM_DIR "/root/.nvm"
+# # Load nvm and bash completion
+# RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
 
 # Install wire
 RUN go install github.com/google/wire/cmd/wire@latest
