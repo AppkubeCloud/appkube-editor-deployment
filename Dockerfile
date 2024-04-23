@@ -50,4 +50,4 @@ ENV PATH=$PATH:/opt/software/go19/bin
 RUN go install github.com/google/wire/cmd/wire@latest
 
 # Install yarn and run yarn install --immutable , keep in base
-RUN /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
+# RUN /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
