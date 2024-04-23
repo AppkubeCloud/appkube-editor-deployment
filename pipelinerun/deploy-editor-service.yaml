@@ -240,6 +240,6 @@ spec:
   - name: helm-workingDir-param
     value: $(workspaces.source.path)/helm/appkube-editor
   - name: build-appkube-editor-base-container
-    value: "false"
+    value: "true"
   - name: uninstall-appkube-editor-service
     value: "false"    

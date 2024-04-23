@@ -39,8 +39,8 @@ ENV GOPATH=/opt/software/go19/gopath
 ENV PATH=$PATH:/opt/software/go19/bin
 
 # Install nvm (node version manager)
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-&& /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
+# && /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0 && npm install -g yarn"
 
 ENV NVM_DIR "/root/.nvm"
 # Load nvm and bash completion
