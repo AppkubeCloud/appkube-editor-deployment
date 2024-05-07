@@ -27,33 +27,93 @@ spec:
         # Go to cloned directory
         cd /workspace/source/
 
-        # Install wire - this is moved to base container
-        # go install github.com/google/wire/cmd/wire@latest
+        echo Install wire - this is moved to base container
+        go install github.com/google/wire/cmd/wire@latest
 
-        # Generate wire files
+        echo Generate wire files
         $(go env GOPATH)/bin/wire gen -tags oss ./pkg/server/ ./pkg/cmd/grafana-cli/runner
 
-        # Install yarn and run yarn install - this is moved to base container
-        RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-        && /bin/bash -c "source /root/.nvm/nvm.sh && nvm install v16.17.0" \
-        && /bin/bash -c "source /root/.nvm/nvm.sh && yarn install --immutable"
+        echo Install essential tools
+        apt-get update && apt-get install -y curl build-essential git
 
-        ENV NVM_DIR "/root/.nvm"
-        # Load nvm and bash completion
-        RUN /bin/bash -c "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && [ -s \"$NVM_DIR/bash_completion\" ] && . \"$NVM_DIR/bash_completion\""
+        echo Install NVM
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 
-        cd conf
-        sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
-        sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+        echo Load NVM and install Node.js
+        export NVM_DIR="/root/.nvm"
+        . "$NVM_DIR/nvm.sh"
+        nvm install 18.16.1  # Change to your desired Node.js version
 
-        # Go to appkube-editor root directory
-        cd ../
+        echo Install Yarn globally
+        npm install -g yarn
 
-        # Compile backend (go server)
-        go run build.go setup && go run build.go build
+        # # Clone the repository into the correct path
+        # git clone https://github.com/AppkubeCloud/Appkube-editor.git /opt/software/Appkube-editor
 
-        # Build UI
-        source /root/.nvm/nvm.sh
+        # # Change to the working directory
+        # cd /opt/software/Appkube-editor
+
+        echo Install project dependencies
+        yarn install --immutable
+
+        #By default, Node.js has a memory limit of about 2 GB to 4 GB for 64-bit systems. The --max_old_space_size option allows you to increase or decrease this limit.
+        echo export node space size
+        export NODE_OPTIONS=--max_old_space_size=4096
+
+        echo Build the frontend
         yarn build
 
+        echo Modify configuration files
+        # cd conf
+        # sed -i 's/host = 127\\.0\\.0\\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
+        # sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+        # cd ../
+
+        echo Compile the backend Go server
+        go run build.go setup
+        go run build.go build
+
+        echo Set permissions for the data directory
         chmod -R +x data
+        echo workspace source
+        ls -al  /workspace/source 
+        echo workspace source conf
+        ls -al /workspace/source/conf 
+        echo workspace source bin
+        ls -al /workspace/source/bin 
+        echo workspace source bin linux amd64
+        ls -al /workspace/source/bin/linux-amd64 
+        echo workspace source bin linux-amd64/grafana-server
+        ls -al /workspace/source/bin/linux-amd64/grafana-server
+        echo workspace source public build
+        ls -al /workspace/source/public/build
+
+
+        # # Install and configure NVM
+        # export NVM_DIR="/root/.nvm"
+        # source "$NVM_DIR/nvm.sh"
+
+        # # Install Node.js and Yarn
+        # nvm install 18.16.1
+        # npm install -g yarn
+
+        # # Install project dependencies
+        # yarn install --immutable
+
+        # # Build frontend
+        # yarn build
+
+        # # Modify configurations
+        # cd conf
+        # sed -i 's/host = 127\.0\.0\.1:5432/host = postgresql.ch8wfucynpvq.us-east-1.rds.amazonaws.com:5431/' defaults.ini
+        # sed -i 's/password = postgres/password = Synect!ks2023/' defaults.ini
+
+        # # Go to appkube-editor root directory
+        # cd ../
+
+        # # Compile backend (Go server)
+        # go run build.go setup
+        # go run build.go build
+
+        # # Set permissions
+        # chmod -R +x data

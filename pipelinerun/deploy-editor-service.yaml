@@ -209,7 +209,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 5Gi
   - name: shared-data1
     volumeClaimTemplate:
       spec:
@@ -240,6 +240,6 @@ spec:
   - name: helm-workingDir-param
     value: $(workspaces.source.path)/helm/appkube-editor
   - name: build-appkube-editor-base-container
-    value: "true"
+    value: "flase"
   - name: uninstall-appkube-editor-service
     value: "false"    

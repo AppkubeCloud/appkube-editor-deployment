@@ -10,15 +10,16 @@ spec:
   gateways:
   - {{ .Values.virtualservice.gateway }}
   http:
+{{- range .Values.virtualservice.httpRules }}
   - match:
     - uri:
-        prefix: {{ .Values.virtualservice.http.prefix | quote }}
+        prefix: {{ .prefix }}
     rewrite:
-      uri: {{ .Values.virtualservice.http.uri | quote }}
-    route:
+      uri: {{ .rewrite }}
     route:
     - destination:
-        host: {{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local
+        host: {{ .destination.host }}
         port:
-          number: {{ .Values.service.port }}
-  {{ end }}
+          number: {{ .destination.port }}
+{{- end }}
+{{- end }}

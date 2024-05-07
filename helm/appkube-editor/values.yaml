@@ -138,9 +138,27 @@ virtualservice:
   namespace: "istio-system"
   hosts: "api.synectiks.net"
   gateway: "appkube-api-gateway"
-  http:
-    prefix: "/editor"
-    uri: /
-
+  httpRules:
+    - prefix: "/editor"
+      rewrite: "/login"
+      destination:
+        host: "appkube-editor.appkube-editor-service.svc.cluster.local"
+        port: 3000
+    - prefix: "/public"
+      rewrite: "/public"
+      destination:
+        host: "appkube-editor.appkube-editor-service.svc.cluster.local"
+        port: 3000
+    - prefix: "/login"
+      rewrite: "/login"
+      destination:
+        host: "appkube-editor.appkube-editor-service.svc.cluster.local"
+        port: 3000
+    - prefix: "/"
+      rewrite: "/"
+      destination:
+        host: "appkube-editor.appkube-editor-service.svc.cluster.local"
+        port: 3000
+  
 tests:
   enabled: false
